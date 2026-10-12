@@ -180,9 +180,6 @@ else:
     // 更新按钮状态
     document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    // 在聊天框里显示一条提示
-    addMessage(`📚 已切换到「${lesson.title}」章节。有什么问题可以问我！`, 'ai');
   }
 
   // 聊天功能
@@ -208,12 +205,12 @@ else:
     // 每次发送问题时，把当前课程内容作为上下文
     const systemPrompt = {
       role: "system",
-      content: `你是一个耐心、友好的 AI 学习导师。当前学生正在学习「${currentLesson}」这一章。
-      以下是这一章的课程内容，请根据这些内容来回答学生的问题：
+      content: `You are a patient, friendly AI learning tutor. The student is currently studying the chapter "${currentLesson}".
+      Here is the content of this chapter, use it to answer the student's questions:
       ---
       ${currentLessonContent}
       ---
-      请用中文回答，并且尽量用简单易懂的方式解释。如果学生问的问题和当前章节无关，也可以回答，但尽量引导回学习内容。`
+      IMPORTANT: Always reply in the SAME language as the student's question. If the student asks in Chinese, reply in Chinese. If the student asks in English, reply in English. If the student asks in any other language, reply in that language. Explain concepts in a simple and easy-to-understand way. If the student's question is not related to the current chapter, you can still answer, but try to guide them back to the learning content.`
     };
 
     const messages = [systemPrompt, ...conversationHistory, { role: "user", content: text }];
