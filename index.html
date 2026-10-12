@@ -31,9 +31,7 @@
   const userInput = document.getElementById('user-input');
   const sendBtn = document.getElementById('send-btn');
 
-  let conversationHistory = [
-    { role: "system", content: "你是一个乐于助人的AI助手。请始终使用中文回答用户的问题。" }
-  ];
+  let conversationHistory = [];
 
   function addMessage(text, sender) {
     const div = document.createElement('div');
