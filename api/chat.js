@@ -1,5 +1,4 @@
 exports.handler = async (event, context) => {
-  // 只允许 POST 请求
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -32,7 +31,11 @@ exports.handler = async (event, context) => {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ model, messages })
+      body: JSON.stringify({ 
+        model, 
+        messages,
+        max_tokens: 1000
+      })
     });
 
     const data = await response.json();
