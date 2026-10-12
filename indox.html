@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+        <meta charset="UTF-8">
+        <title>我的 AI 聊天机器人</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f4f4f9; }
+        #chat-box { background: white; border: 1px solid #ddd; border-radius: 8px; height: 400px; overflow-y: auto; padding: 15px; margin-bottom: 15px; }
+        .message { margin-bottom: 15px; padding: 10px 15px; border-radius: 10px; max-width: 80%; word-wrap: break-word; }
+        .user { background: #007bff; color: white; margin-left: auto; text-align: right; }
+        .ai { background: #e9ecef; color: #333; margin-right: auto; }
+        #input-area { display: flex; gap: 10px; }
+        #user-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:disabled { background: #aaa; }
+    </style>
+</head>
+<body>
+
+<h2>🤖 我的 AI 聊天机器人</h2>
+
+<div id="chat-box"></div>
+
+<div id="input-area">
+    <input type="text" id="user-input" placeholder="输入你的问题..." onkeypress="if(event.key==='Enter') sendMessage()">
+    <button id="send-btn" onclick="sendMessage()">发送</button>
+</div>
+
+<script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    let conversationHistory = [
+        { role: "system", content: "你是一个乐于助人的AI助手。请始终使用中文回答用户的问题。" }
+    ];
+
+    function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = `message ${sender}`;
+        div.textContent = text;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user');
+        userInput.value = '';
+        sendBtn.disabled = true;
+        sendBtn.textContent = '思考中...';
+        conversationHistory.push({ role: "user", content: text });
+
+        try {
+            // 请求你自己的后端接口
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ messages: conversationHistory })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                addMessage("❌ 错误: " + data.error, 'ai');
+            } else {
+                const aiReply = data.reply;
+                addMessage(aiReply, 'ai');
+                conversationHistory.push({ role: "assistant", content: aiReply });
+            }
+
+        } catch (error) {
+            addMessage("❌ 网络请求失败: " + error.message, 'ai');
+        } finally {
+            sendBtn.disabled = false;
+            sendBtn.textContent = '发送';
+            userInput.focus();
+        }
+    }
+</script>
+
+</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>
