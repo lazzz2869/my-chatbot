@@ -31,7 +31,7 @@
     .chat-header { padding: 15px 20px; background: #e94560; color: white; font-weight: bold; display: flex; align-items: center; gap: 8px; }
     .chat-header span { font-size: 12px; background: #fff; color: #e94560; padding: 2px 8px; border-radius: 10px; }
     #chat-box { flex: 1; overflow-y: auto; padding: 15px; }
-    .message { margin-bottom: 12px; padding: 10px 14px; border-radius: 12px; max-width: 85%; word-wrap: break-word; font-size: 14px; line-height: 1.5; }
+    .message { margin-bottom: 12px; padding: 10px 14px; border-radius: 12px; max-width: 85%; word-wrap: break-word; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
     .user { background: #007bff; color: white; margin-left: auto; border-bottom-right-radius: 2px; }
     .ai { background: #e9ecef; color: #333; margin-right: auto; border-bottom-left-radius: 2px; }
     .chat-input-area { padding: 12px; background: white; border-top: 1px solid #ddd; display: flex; gap: 8px; }
@@ -202,7 +202,11 @@ else:
       ---
       ${currentLessonContent}
       ---
-      IMPORTANT: Always reply in the SAME language as the student's question. If the student asks in Chinese, reply in Chinese. If the student asks in English, reply in English. If the student asks in any other language, reply in that language. Keep your answers concise (under 200 words) unless the student asks for a detailed explanation. If the student sends random characters or gibberish, just briefly say you don't understand and ask them to rephrase.`
+      STRICT RULES (apply to ALL languages, no exceptions):
+      1. Always reply in the SAME language as the student's question. If the student asks in Chinese, reply in Chinese. If the student asks in English, reply in English. If the student asks in any other language, reply in that language.
+      2. NEVER use emojis in any language. No emojis at all. Use plain text only. This rule applies to Chinese, English, Japanese, Korean, and every other language.
+      3. Keep your answers concise (under 200 words) unless the student asks for a detailed explanation.
+      4. If the student sends random characters or gibberish, just briefly say you don't understand and ask them to rephrase.`
     };
 
     const messages = [systemPrompt, ...conversationHistory, { role: "user", content: text }];
