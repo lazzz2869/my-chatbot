@@ -13,14 +13,12 @@
     
     .main-container { display: flex; flex: 1; overflow: hidden; }
     
-    /* 左侧课程导航 */
     .sidebar { width: 220px; background: #16213e; color: white; padding: 20px 0; overflow-y: auto; }
     .sidebar h2 { font-size: 14px; padding: 0 20px 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
     .sidebar button { display: block; width: 100%; padding: 12px 20px; background: none; border: none; color: #ccc; text-align: left; cursor: pointer; font-size: 15px; transition: 0.2s; border-left: 3px solid transparent; }
     .sidebar button:hover { background: #0f3460; color: white; }
     .sidebar button.active { background: #0f3460; color: white; border-left-color: #e94560; }
     
-    /* 中间课程内容 */
     .content { flex: 1; padding: 30px; overflow-y: auto; background: white; }
     .content h2 { color: #1a1a2e; margin-bottom: 15px; }
     .content h3 { color: #e94560; margin: 20px 0 10px; }
@@ -29,7 +27,6 @@
     .content code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; color: #e94560; }
     .content ul { margin: 10px 0 15px 25px; line-height: 1.8; }
     
-    /* 右侧 AI 聊天 */
     .chat-panel { width: 380px; background: #f8f9fa; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
     .chat-header { padding: 15px 20px; background: #e94560; color: white; font-weight: bold; display: flex; align-items: center; gap: 8px; }
     .chat-header span { font-size: 12px; background: #fff; color: #e94560; padding: 2px 8px; border-radius: 10px; }
@@ -40,6 +37,7 @@
     .chat-input-area { padding: 12px; background: white; border-top: 1px solid #ddd; display: flex; gap: 8px; }
     #user-input { flex: 1; padding: 10px 14px; border: 1px solid #ddd; border-radius: 20px; font-size: 14px; outline: none; }
     #user-input:focus { border-color: #e94560; }
+    #user-input:disabled { background: #f0f0f0; color: #999; }
     #send-btn { padding: 10px 18px; background: #e94560; color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 14px; }
     #send-btn:disabled { background: #aaa; }
     
@@ -54,7 +52,6 @@
 
 <div class="main-container">
 
-  <!-- 左侧课程导航 -->
   <div class="sidebar">
     <h2>课程目录</h2>
     <button class="active" onclick="loadLesson('intro', this)">📖 课程介绍</button>
@@ -63,7 +60,6 @@
     <button onclick="loadLesson('practice', this)">✏️ 练习题</button>
   </div>
 
-  <!-- 中间课程内容 -->
   <div class="content" id="lesson-content">
     <h2>📖 课程介绍</h2>
     <p>欢迎来到我的学习网站！在这里，你可以阅读课程内容，并在右侧的 AI 导师聊天窗口里随时提问。</p>
@@ -77,7 +73,6 @@
     <p>准备好了吗？点击左侧的章节开始学习吧！</p>
   </div>
 
-  <!-- 右侧 AI 聊天 -->
   <div class="chat-panel">
     <div class="chat-header">
       🤖 AI 导师 <span>随时提问</span>
@@ -192,8 +187,11 @@ else:
     const text = userInput.value.trim();
     if (!text) return;
 
+    if (sendBtn.disabled) return;
+
     addMessage(text, 'user');
     userInput.value = '';
+    userInput.disabled = true;
     sendBtn.disabled = true;
     sendBtn.textContent = '...';
 
@@ -204,14 +202,14 @@ else:
       ---
       ${currentLessonContent}
       ---
-      IMPORTANT: Always reply in the SAME language as the student's question. If the student asks in Chinese, reply in Chinese. If the student asks in English, reply in English. If the student asks in any other language, reply in that language. Explain concepts in a simple and easy-to-understand way. If the student's question is not related to the current chapter, you can still answer, but try to guide them back to the learning content.`
+      IMPORTANT: Always reply in the SAME language as the student's question. If the student asks in Chinese, reply in Chinese. If the student asks in English, reply in English. If the student asks in any other language, reply in that language. Keep your answers concise (under 200 words) unless the student asks for a detailed explanation. If the student sends random characters or gibberish, just briefly say you don't understand and ask them to rephrase.`
     };
 
     const messages = [systemPrompt, ...conversationHistory, { role: "user", content: text }];
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
 
       const response = await fetch("/.netlify/functions/chat", {
         method: "POST",
@@ -236,6 +234,7 @@ else:
     } catch (error) {
       addMessage("❌ 网络请求失败: " + error.message, 'ai');
     } finally {
+      userInput.disabled = false;
       sendBtn.disabled = false;
       sendBtn.textContent = '发送';
       userInput.focus();
